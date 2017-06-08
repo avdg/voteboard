@@ -30,12 +30,7 @@ class User
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-    private $password;
-
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
-    private $salt;
+    private $hash;
 
     /**
      * @ORM\Column(type="boolean", nullable=false, options = {"default": false})
@@ -113,54 +108,6 @@ class User
     public function getEmail()
     {
         return $this->email;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set salt
-     *
-     * @param string $salt
-     *
-     * @return User
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
-
-        return $this;
-    }
-
-    /**
-     * Get salt
-     *
-     * @return string
-     */
-    public function getSalt()
-    {
-        return $this->salt;
     }
 
     /**
@@ -257,5 +204,29 @@ class User
     public function getIsAdmin()
     {
         return $this->is_admin;
+    }
+
+    /**
+     * Set hash
+     *
+     * @param string $hash
+     *
+     * @return User
+     */
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * Get hash
+     *
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->hash;
     }
 }
