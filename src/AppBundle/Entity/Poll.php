@@ -37,17 +37,17 @@ class Poll
     private $answer_2;
 
     /**
-     * @ORM\Column(type="string", length=32, nullable=false)
+     * @ORM\Column(type="string", length=32, nullable=true)
      */
     private $answer_3;
 
     /**
-     * @ORM\Column(type="string", length=32, nullable=false)
+     * @ORM\Column(type="string", length=32, nullable=true)
      */
     private $answer_4;
 
     /**
-     * @ORM\Column(type="string", length=32, nullable=false)
+     * @ORM\Column(type="string", length=32, nullable=true)
      */
     private $answer_5;
 
@@ -59,7 +59,15 @@ class Poll
     /**
      * @ORM\Column(type="boolean", nullable=false, options={"default": false})
      */
-    private $closed;
+    private $closed = false;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->posted_at = new \DateTime();
+    }
 
     /**
      * Get id

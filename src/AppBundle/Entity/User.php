@@ -3,10 +3,19 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="user")
+ * @ORM\Table(
+ *     name="user",
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(columns={"name"}),
+ *         @ORM\UniqueConstraint(columns={"email"})
+ *     }
+ * )
+ * @UniqueEntity(fields="name", message="Username already taken"),
+ * @UniqueEntity(fields="email", message="Email already taken")
  */
 class User
 {
@@ -35,22 +44,22 @@ class User
     /**
      * @ORM\Column(type="boolean", nullable=false, options = {"default": false})
      */
-    private $notify_poll;
+    private $notify_poll = false;
 
     /**
      * @ORM\Column(type="boolean", nullable=false, options = {"default": true})
      */
-    private $notify_result;
+    private $notify_result = true;
 
     /**
      * @ORM\Column(type="boolean", nullable=false, options = {"default": false})
      */
-    private $blocked;
+    private $blocked = false;
 
     /**
      * @ORM\Column(type="boolean", nullable=false, options = {"default": false})
      */
-    private $is_admin;
+    private $is_admin = false;
 
     /**
      * Get id
