@@ -119,28 +119,4 @@ class Vote
     {
         return $this->vote;
     }
-
-    /**
-     * Vote filter
-     *
-     * @return boolean True if item votes for requested vote item
-     */
-    public function filterVotes($vote)
-    {
-        return function ($item) use ($vote) {
-            return $item->getVote() === $vote;
-        };
-    }
-
-    /**
-     * User filter
-     *
-     * @return boolean True if vote came from the requested user
-     */
-    public function filterUsers($userId)
-    {
-        return function ($item) use ($userId) {
-            return $item->getUserId() === $userId;
-        };
-    }
 }

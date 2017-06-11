@@ -1,0 +1,86 @@
+[
+    {
+        "id": 0,
+        "question": "Hello, can I ask a question",
+        "answers": [
+            {
+                "answer": "Yes",
+                "votes": 0,
+                "id": 1
+            },
+            {
+                "answer": "No",
+                "votes": 0,
+                "id": 2
+            },
+            {
+                "answer": "I don't vote",
+                "votes": 0,
+                "id": 3
+            },
+            {
+                "answer": "I don't want to vote",
+                "votes": 0,
+                "id": 4
+            },
+            {
+                "answer": "I don't like to vote",
+                "votes": 0,
+                "id": 5
+            }
+        ],
+        "disabled": false
+    },
+
+    {
+        "id": 1,
+        "question": "Hello, can I ask an other question",
+        "answers": [
+            {
+                "answer": "Yes",
+                "votes": 0,
+                "id": 1
+            },
+            {
+                "answer": "No",
+                "votes": 0,
+                "id": 2
+            },
+            {
+                "answer": "I don't vote",
+                "votes": 0,
+                "id": 3
+            },
+            {
+                "answer": "I don't want to vote",
+                "votes": 0,
+                "id": 4
+            },
+            {
+                "answer": "I don't like to vote",
+                "votes": 0,
+                "id": 5
+            }
+        ],
+        "disabled": false
+    },
+
+    {
+        "id": 3,
+        "question": "Hello, can I ask an other question",
+        "answers": [
+            {
+                "answer": "Yes",
+                "votes": 0,
+                "id": 1
+            },
+            {
+                "answer": "No",
+                "votes": 0,
+                "selected": true,
+                "id": 5
+            }
+        ],
+        "disabled": true
+    }
+]
