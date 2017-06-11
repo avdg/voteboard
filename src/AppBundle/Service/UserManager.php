@@ -48,8 +48,12 @@ class UserManager
     public function getUserId()
     {
         if ($this->session->has("user")) {
-            $user = $this->em->getRepository("\AppBundle\Entity\User")
-                ->findOneBy(["name" => $this->session->get("user")]);
+            $user = $this
+                ->em
+                ->getRepository("\AppBundle\Entity\User")
+                ->findOneBy([
+                    "name" => $this->session->get("user")
+                ]);
 
             if ($user !== null) {
                 return $user->getId();

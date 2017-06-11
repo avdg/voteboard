@@ -12,21 +12,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Component\Validator\Constraints\Length;
 
+use AppBundle\Validator\Constraint\UniqueEmail;
+use AppBundle\Validator\Constraint\UniqueUser;
+
 class Registration extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add("username", TextType::class, [
             'required' => true,
-            'constraints' => new Length([
-                "max" => 100
-            ])
+            'constraints' => [
+                new Length([
+                    "max" => 100
+                ]),
+                new UniqueUser()
+            ]
         ])
         ->add("email", EmailType::class, [
             'required' => true,
-            'constraints' => new Length([
-                "max" => 250
-            ])
+            'constraints' => [
+                new Length([
+                    "max" => 250
+                ]),
+                new UniqueEmail()
+            ]
         ])
         ->add("password", RepeatedType::class, [
             'type' => PasswordType::class,
