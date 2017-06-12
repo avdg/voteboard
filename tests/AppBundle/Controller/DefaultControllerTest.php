@@ -26,8 +26,9 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('Hello guest,', $crawler->filter('.container')->text());
 
-        // Check database queries - Need at least one to fetch the polls
-        $this->assertGreaterThan(0, $client->getProfile()->getCollector('db')->getQueryCount());
+        // Check database queries
+        // Need at least one query to fetch the polls but the table should be empty
+        $this->assertEquals(1, $client->getProfile()->getCollector('db')->getQueryCount());
     }
 
     public function testLogin()
