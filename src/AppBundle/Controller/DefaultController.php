@@ -100,6 +100,10 @@ class DefaultController extends Controller
         UserManager $userManager,
         PollManager $pollManager
     ) {
+        if ($userManager->isGuest()) {
+            return $this->redirectToRoute("homepage");
+        }
+
         $form = $this->createForm(Forms\Poll::class);
         $form->handleRequest($request);
 
@@ -117,7 +121,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/vote/{poll}/{item}")
+     * @Route("/vote/{poll}/{item}", defaults = {"poll": null, "item": null})
      */
     public function voteAction(
         userManager $userManager,
