@@ -124,12 +124,14 @@ class DefaultController extends Controller
      * @Route("/vote/{poll}/{item}", defaults = {"poll": null, "item": null})
      */
     public function voteAction(
+        Request $request,
         userManager $userManager,
         PollManager $pollManager,
         $poll,
         $item
     ) {
         if (!$userManager->isGuest() &&
+            $this->isCsrfTokenValid('_token', $request->query->get("_token", null)) &&
             ctype_digit($poll) &&
             ctype_digit($item)
         ) {

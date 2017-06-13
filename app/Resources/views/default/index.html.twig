@@ -1,3 +1,4 @@
+{% set csrf = csrf_token('_token') %}
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
@@ -73,7 +74,7 @@ body {
         </div>
         <div class="col-md-4 vote-item-answers">
             {% for answer in poll.answers %}
-                <a href="/vote/{{poll.id}}/{{answer.id}}">
+                <a href="/vote/{{poll.id}}/{{answer.id}}?_token={{csrf}}">
                     <div class="vote-item-answer-box{% if answer.selected is defined and answer.selected %} vote-item-answer-selected{% endif %}">
                         <span class="vote-item-answer">{{answer.answer}}</span>
                         <span class="vote-item-answer-votes">{{answer.votes}}</span>
