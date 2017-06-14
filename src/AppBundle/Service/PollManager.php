@@ -8,73 +8,51 @@ class PollManager
 {
     private $em;
 
+    private $pollQuery = <<<QUERY
+SELECT poll.*,
+	SUM(CASE WHEN vote.vote = 1 THEN 1 ELSE 0 END) AS votes_1,
+    SUM(CASE WHEN vote.vote = 2 THEN 1 ELSE 0 END) AS votes_2,
+    SUM(CASE WHEN vote.vote = 3 THEN 1 ELSE 0 END) AS votes_3,
+    SUM(CASE WHEN vote.vote = 4 THEN 1 ELSE 0 END) AS votes_4,
+    SUM(CASE WHEN vote.vote = 5 THEN 1 ELSE 0 END) AS votes_5,
+    MAX(CASE WHEN vote.user_id = :user_id THEN vote.vote ELSE 0 END) AS vote_user
+FROM poll LEFT JOIN vote on poll.id = vote.poll_id
+GROUP BY poll.id;
+QUERY;
+
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
-    /**
-     * Vote filter
-     *
-     * @return boolean True if item votes for requested vote item
-     */
-    public function filterVotes($vote)
-    {
-        return function ($item) use ($vote) {
-            return $item->getVote() === $vote;
-        };
-    }
-
-    /**
-     * User filter
-     *
-     * @return boolean True if vote came from the requested user
-     */
-    public function filterUsers($userId)
-    {
-        return function ($item) use ($userId) {
-            return $item->getUserId() === $userId;
-        };
-    }
-
     public function getPollsAsUser($userId)
     {
         $polls = [];
-        $pollEntities = $this
-            ->em
-            ->getRepository("\AppBundle\Entity\Poll")
-            ->findBy(array(), array('posted_at' => 'DESC'));
 
-        foreach ($pollEntities as $poll) {
-            $votes = $this
-                ->em
-                ->getRepository("\AppBundle\Entity\Vote")
-                ->findBy(["poll_id" => $poll->getId()]);
+        $prepStat = $this->em->getConnection()->prepare($this->pollQuery);
+        $prepStat->execute(["user_id" => $userId]);
 
+        $results = $prepStat->fetchAll();
+
+        foreach ($results as $result) {
             $answers = [];
 
             for ($i = 1; $i <= 5; $i++) {
-                if ($poll->{"getAnswer" . $i}() !== null) {
-                    $answerVotes = array_filter(
-                        $votes,
-                        self::filterVotes($i)
-                    );
-                    $selected = array_filter(
-                        $answerVotes,
-                        self::filterUsers($userId)
-                    );
-                    $answers[] = [
-                        "answer" => $poll->{"getAnswer" . $i}(),
-                        "votes" => sizeof($answerVotes),
-                        "id" => $i,
-                        "selected" => sizeof($selected) > 0
-                    ];
+                if ($result["answer_" . $i] === null) {
+                    continue;
                 }
+
+                $answers[] = [
+                    "answer" => $result["answer_" . $i],
+                    "votes" => $result["votes_" . $i],
+                    "id" => $i,
+                    "selected" => $result["vote_user"] == $i
+                ];
             }
 
             $polls[] = [
-                "id" => $poll->getId(),
-                "question" => $poll->getQuestion(),
+                "id" => $result["id"],
+                "question" => $result["question"],
                 "answers" => $answers
             ];
         }
