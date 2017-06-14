@@ -10,7 +10,7 @@ class PollManager
 
     private $pollQuery = <<<QUERY
 SELECT poll.*,
-	SUM(CASE WHEN vote.vote = 1 THEN 1 ELSE 0 END) AS votes_1,
+    SUM(CASE WHEN vote.vote = 1 THEN 1 ELSE 0 END) AS votes_1,
     SUM(CASE WHEN vote.vote = 2 THEN 1 ELSE 0 END) AS votes_2,
     SUM(CASE WHEN vote.vote = 3 THEN 1 ELSE 0 END) AS votes_3,
     SUM(CASE WHEN vote.vote = 4 THEN 1 ELSE 0 END) AS votes_4,
