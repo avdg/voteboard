@@ -28,6 +28,22 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/poll/{pollId}", name="showPoll")
+     */
+    public function showPollAction(
+        Request $request,
+        UserManager $userManager,
+        PollManager $pollManager,
+        $pollId
+    ) {
+        return $this->render('default/index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'polls' => $pollManager->getSinglePollAsUser($pollId, $userManager->getUserId()),
+            'user' => $request->getSession()->get("user")
+        ]);
+    }
+
+    /**
      * @Route("/registration", name="registration")
      */
     public function registrationAction(

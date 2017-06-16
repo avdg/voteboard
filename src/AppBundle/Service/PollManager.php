@@ -8,7 +8,7 @@ class PollManager
 {
     private $em;
 
-    private $pollQuery = <<<QUERY
+    private $allPollsQuery = <<<QUERY
 SELECT poll.*,
     SUM(CASE WHEN vote.vote = 1 THEN 1 ELSE 0 END) AS votes_1,
     SUM(CASE WHEN vote.vote = 2 THEN 1 ELSE 0 END) AS votes_2,
@@ -20,6 +20,19 @@ FROM poll LEFT JOIN vote on poll.id = vote.poll_id
 GROUP BY poll.id;
 QUERY;
 
+    private $singlePollQuery = <<<QUERY
+SELECT poll.*,
+    SUM(CASE WHEN vote.vote = 1 THEN 1 ELSE 0 END) AS votes_1,
+    SUM(CASE WHEN vote.vote = 2 THEN 1 ELSE 0 END) AS votes_2,
+    SUM(CASE WHEN vote.vote = 3 THEN 1 ELSE 0 END) AS votes_3,
+    SUM(CASE WHEN vote.vote = 4 THEN 1 ELSE 0 END) AS votes_4,
+    SUM(CASE WHEN vote.vote = 5 THEN 1 ELSE 0 END) AS votes_5,
+    MAX(CASE WHEN vote.user_id = :user_id THEN vote.vote ELSE 0 END) AS vote_user
+FROM poll LEFT JOIN vote on poll.id = vote.poll_id
+WHERE poll.id = :poll_id
+GROUP BY poll.id;
+QUERY;
+
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -27,11 +40,26 @@ QUERY;
 
     public function getPollsAsUser($userId)
     {
-        $polls = [];
-
-        $prepStat = $this->em->getConnection()->prepare($this->pollQuery);
+        $prepStat = $this->em->getConnection()->prepare($this->allPollsQuery);
         $prepStat->execute(["user_id" => $userId]);
 
+        return $this->getPolls($prepStat);
+    }
+
+    public function getSinglePollAsUser($pollId, $userId)
+    {
+        $prepStat = $this->em->getConnection()->prepare($this->singlePollQuery);
+        $prepStat->execute([
+            "poll_id" => $pollId,
+            "user_id" => $userId
+        ]);
+
+        return $this->getPolls($prepStat);
+    }
+
+    protected function getPolls($prepStat)
+    {
+        $polls = [];
         $results = $prepStat->fetchAll();
 
         foreach ($results as $result) {
