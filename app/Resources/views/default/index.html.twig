@@ -6,13 +6,6 @@
 body {
     background-color: #f8f8f8;
 }
-.container-fluid .jumbotron {
-    background-color: #ccf;
-    border: 20px solid #844;
-    border-radius: 20px;
-    color: #846;
-    overflow: hidden;
-}
 .vote-item {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -57,9 +50,6 @@ body {
 {% endblock %}
 
 {% block body %}
-<div class="jumbotron">
-    <h1>Voting board</h1>
-</div>
 <div class="container user">
     {% if user is empty %}
         Hello guest, feel free to <a href="/login">login</a> or <a href="/registration">register</a>
