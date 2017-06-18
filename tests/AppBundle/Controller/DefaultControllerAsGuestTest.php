@@ -40,7 +40,6 @@ class DefaultControllerTest extends WebTestCase
 
         // Check content
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('Voting board', $crawler->filter('h1')->text());
         $this->assertContains('User registration', $crawler->filter('h2')->text());
 
         // Check database queries - No database access required
@@ -56,7 +55,6 @@ class DefaultControllerTest extends WebTestCase
 
         // Check content
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('Voting board', $crawler->filter('h1')->text());
         $this->assertContains('Login', $crawler->filter('h2')->text());
 
         // Check database queries - No database access required
