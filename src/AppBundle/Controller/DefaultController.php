@@ -16,14 +16,13 @@ class DefaultController extends Controller
      * @Route("/", name="homepage")
      */
     public function indexAction(
-        Request $request,
         UserManager $userManager,
         PollManager $pollManager
     ) {
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'polls' => $pollManager->getPollsAsUser($userManager->getUserId()),
-            'user' => $request->getSession()->get("user")
+            'user' => $userManager->getCurrentUser()
         ]);
     }
 
@@ -31,15 +30,20 @@ class DefaultController extends Controller
      * @Route("/poll/{pollId}", name="showPoll")
      */
     public function showPollAction(
-        Request $request,
         UserManager $userManager,
         PollManager $pollManager,
         $pollId
     ) {
+        $poll = $pollManager->getSinglePollAsUser($pollId, $userManager->getUserId());
+
+        if (sizeof($poll) === 0) {
+            throw $this->createNotFoundException("Poll does not exist");
+        }
+
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-            'polls' => $pollManager->getSinglePollAsUser($pollId, $userManager->getUserId()),
-            'user' => $request->getSession()->get("user")
+            'polls' => $poll,
+            'user' => $userManager->getCurrentUser()
         ]);
     }
 

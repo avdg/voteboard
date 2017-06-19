@@ -31,6 +31,18 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(1, $client->getProfile()->getCollector('db')->getQueryCount());
     }
 
+    public function testNonExistingPoll()
+    {
+        $client = static::createClient();
+        $client->enableProfiler();
+
+        $crawler = $client->request('GET', '/poll/100');
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(1, $client->getProfile()->getCollector('db')->getQueryCount());
+    }
+
     public function testRegistration()
     {
         $client = static::createClient();
