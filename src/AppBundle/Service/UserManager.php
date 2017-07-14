@@ -10,6 +10,7 @@ class UserManager
 {
     protected $session;
     protected $em;
+    protected $user;
 
     /**
      * Constructor
@@ -21,11 +22,39 @@ class UserManager
     }
 
     /**
+     * Check if the user is logged in
+     */
+    public function validateUser()
+    {
+        if (!$this->session->has("user") || $this->session->get("user") === null) {
+            return false;
+        }
+
+        if ($this->user === null) {
+            $this->user = $this
+                ->em
+                ->getRepository("\AppBundle\Entity\User")
+                ->findOneBy([
+                    "name" => $this->session->get("user")
+                ]);
+        }
+
+        if ($this->user === null
+            || !hash_equals($this->user->getHash(), $this->session->get("user_token"))
+        ) {
+            $this->logoutUser();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if current user is a guest
      */
     public function isGuest()
     {
-        return !$this->session->has("user") || $this->session->get("user") === null;
+        return !$this->validateUser();
     }
 
     /**
@@ -35,6 +64,8 @@ class UserManager
      */
     public function getCurrentUser()
     {
+        $this->validateUser();
+
         if ($this->session->has("user")) {
             return $this->session->get("user");
         }
@@ -47,17 +78,8 @@ class UserManager
      */
     public function getUserId()
     {
-        if ($this->session->has("user")) {
-            $user = $this
-                ->em
-                ->getRepository("\AppBundle\Entity\User")
-                ->findOneBy([
-                    "name" => $this->session->get("user")
-                ]);
-
-            if ($user !== null) {
-                return $user->getId();
-            }
+        if ($this->validateUser()) {
+            return $this->user->getId();
         }
 
         return false;
@@ -65,6 +87,8 @@ class UserManager
 
     /**
      * Check if the user is valid
+     *
+     * @param array $data Login data, expected keys are email and password
      *
      * @return boolean True if the user successfully logged in
      */
@@ -79,10 +103,9 @@ class UserManager
             return false;
         }
 
-        $hash = null; // Get the salt from the database
-
         if (self::verifyHash($data["password"], $user->getHash())) {
             $this->session->set("user", $user->getName());
+            $this->session->set("user_token", $user->getHash());
             return true;
         }
 
@@ -91,7 +114,8 @@ class UserManager
 
     public function logoutUser()
     {
-        $this->session->set("user", null);
+        $this->session->remove("user");
+        $this->session->remove("user_token");
     }
 
     /**
@@ -107,6 +131,9 @@ class UserManager
     /**
      * Creates a new user
      *
+     * @param array $data create user data, expected keys are email, username
+     *                    and password
+     *
      * @return \AppBundle\Entity\User New user object
      */
     public function createUser($data)
@@ -115,7 +142,6 @@ class UserManager
         $entity->setName($data["username"]);
         $entity->setEmail($data["email"]);
         $entity->setHash($this->generateHash($data["password"]));
-
 
         $this->em->persist($entity);
         $this->em->flush();
