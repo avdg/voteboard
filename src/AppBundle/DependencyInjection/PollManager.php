@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\DependencyInjection;
 
 use Doctrine\ORM\EntityManagerInterface;
 

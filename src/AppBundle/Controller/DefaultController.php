@@ -7,8 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Forms;
-use AppBundle\Service\UserManager;
-use AppBundle\Service\PollManager;
+use AppBundle\DependencyInjection\UserManager;
+use AppBundle\DependencyInjection\PollManager;
 
 class DefaultController extends Controller
 {
