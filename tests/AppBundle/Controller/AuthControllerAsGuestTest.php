@@ -15,68 +15,42 @@ class DefaultControllerTest extends WebTestCase
         DatabasePrimer::truncateAll(self::$kernel);
     }
 
-    public function testIndex()
+    public function testRegistration()
     {
         $client = static::createClient();
         $client->enableProfiler();
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request('GET', '/registration');
 
         // Check content
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('Hello guest,', $crawler->filter('.container')->text());
-
-        // Check database queries
-        // Need at least one query to fetch the polls but the table should be empty
-        $this->assertEquals(1, $client->getProfile()->getCollector('db')->getQueryCount());
-    }
-
-    public function testNonExistingPoll()
-    {
-        $client = static::createClient();
-        $client->enableProfiler();
-
-        $crawler = $client->request('GET', '/poll/100');
-
-        $this->assertEquals(404, $client->getResponse()->getStatusCode());
-
-        $this->assertEquals(1, $client->getProfile()->getCollector('db')->getQueryCount());
-    }
-
-    public function testCreatePoll()
-    {
-        $client = static::createClient();
-        $client->enableProfiler();
-
-        $crawler = $client->request('GET', '/create');
-
-        // Check content
-        $this->assertTrue($client->getResponse()->isRedirect('/'));
+        $this->assertContains('User registration', $crawler->filter('h2')->text());
 
         // Check database queries - No database access required
         $this->assertEquals(0, $client->getProfile()->getCollector('db')->getQueryCount());
     }
 
-    public function testVote()
+    public function testLogin()
     {
         $client = static::createClient();
         $client->enableProfiler();
 
-        $crawler = $client->request('GET', '/vote');
+        $crawler = $client->request('GET', '/login');
 
         // Check content
-        $this->assertTrue($client->getResponse()->isRedirect('/'));
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertContains('Login', $crawler->filter('h2')->text());
 
         // Check database queries - No database access required
         $this->assertEquals(0, $client->getProfile()->getCollector('db')->getQueryCount());
     }
 
-    public function testVoteAsGuest()
+    public function testLogout()
     {
         $client = static::createClient();
         $client->enableProfiler();
 
-        $crawler = $client->request('GET', '/vote/0/1');
+        $crawler = $client->request('GET', '/logout');
 
         // Check content
         $this->assertTrue($client->getResponse()->isRedirect('/'));
